@@ -1,0 +1,154 @@
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        # BFS
+        if not heights:
+            return []
+        
+        rows, cols = len(heights), len(heights[0])
+
+        pacific_visited = set()
+        atlantic_visited = set()
+        pacific_q = collections.deque()
+        atlantic_q = collections.deque()
+
+        # add border cells to queues
+        # top border
+        for i in range(cols):
+            # print(f"(0, {i})")
+            pacific_q.append((0, i))
+            pacific_visited.add((0, i))
+        # print()
+        # left border
+        for i in range(1, rows):
+            # print(f"({i}, 0)")
+            pacific_q.append((i, 0))
+            pacific_visited.add((i, 0))
+        # print()
+        # Bottom border
+        for i in range(cols):
+            # print(f"({rows-1}, {i})")
+            atlantic_q.append((rows-1, i))
+            atlantic_visited.add((rows-1, i))
+        # print()
+
+        # Right border 
+        for i in range(rows-1):
+            # print(f"({i}, {cols-1})")
+            atlantic_q.append((i, cols-1))
+            atlantic_visited.add((i, cols-1))
+
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        
+        # pacific BFS
+        while pacific_q:
+            curr_row, curr_col = pacific_q.popleft()
+
+            for row_dir, col_dir in directions:
+                new_row = curr_row + row_dir
+                new_col = curr_col + col_dir
+
+                if new_row >= 0 and new_row < rows and \
+                new_col >= 0 and new_col < cols and \
+                (new_row, new_col) not in pacific_visited and \
+                heights[new_row][new_col] >= heights[curr_row][curr_col]:
+                    pacific_visited.add((new_row, new_col))
+                    pacific_q.append((new_row, new_col))
+
+        # atlantic BFS
+        while atlantic_q:
+            curr_row, curr_col = atlantic_q.popleft()
+
+            for row_dir, col_dir in directions:
+                new_row = curr_row + row_dir
+                new_col = curr_col + col_dir
+
+                if new_row >= 0 and new_row < rows and \
+                new_col >= 0 and new_col < cols and \
+                (new_row, new_col) not in atlantic_visited and \
+                heights[new_row][new_col] >= heights[curr_row][curr_col]:
+                    atlantic_visited.add((new_row, new_col))
+                    atlantic_q.append((new_row, new_col))
+
+        result = []
+        for cell in pacific_visited & atlantic_visited:
+            result.append([cell[0], cell[1]])
+        return result
+        #-------------------------------------------------------------------------------
+        # DFS
+        # 1. base case: height is None
+        # if not heights:
+        #     return []
+
+        # rows, cols = len(heights), len(heights[0])
+
+        # # 2. Two sets to track wich cells can reach each ocean
+        # pacific_reachable = set()
+        # atlantic_reachable = set()
+
+        # # 3. run the dfs (four parameters)
+        # def dfs (row, col, reachable, prev_height):
+        #     if row < 0 or row >= rows or col < 0 or col >= cols or heights[row][col] < prev_height or (row, col) in reachable:
+        #         return
+        #     reachable.add((row, col))
+        #     dfs(row+1, col, reachable, heights[row][col])
+        #     dfs(row-1, col, reachable, heights[row][col])
+        #     dfs(row, col+1, reachable, heights[row][col])
+        #     dfs(row, col-1, reachable, heights[row][col])
+
+        # # 4. run four for loops for row and col of each ocean
+        # # Pacific: top row
+        # for i in range(cols):
+        #     dfs(0, i, pacific_reachable, float('-inf'))
+        # # Pacific: left col
+        # for i in range(1, rows):
+        #     dfs(i, 0, pacific_reachable, float('-inf'))
+        # # Atlantic: bottom row
+        # for i in range(cols):
+        #     dfs(rows-1, i, atlantic_reachable, float('-inf'))
+        # # Atlantic: right col
+        # for i in range(rows-1):
+        #     dfs(i, cols-1, atlantic_reachable, float('-inf'))
+        
+        # # 5. find the intersection
+        # result =[]
+        # for cell in pacific_reachable & atlantic_reachable:
+        #     result.append([cell[0], cell[1]])
+        # # 6. return
+        # return result
+
+        #-------------------------------------------------------------------------------
+        # DFS solution
+        # if not heights:
+        #     return []
+        # rows, cols = len(heights), len(heights[0])
+
+        # # Two sets to track wich cells can reach each ocean
+        # pacific_reachable = set()
+        # atlantic_reachable = set()
+
+        # def dfs(row, col, reachable, prev_height):
+        #     if row < 0 or row >= rows or col < 0 or col >= cols or heights[row][col] < prev_height or (row, col) in reachable:
+        #         return
+            
+        #     reachable.add((row, col))
+        #     dfs(row+1, col, reachable, heights[row][col])
+        #     dfs(row-1, col, reachable, heights[row][col])
+        #     dfs(row, col+1, reachable, heights[row][col])
+        #     dfs(row, col-1, reachable, heights[row][col])
+        
+        # for col in range(cols):
+        #     dfs(0, col, pacific_reachable, float("-inf"))
+        # for row in range(rows):
+        #     dfs(row, 0, pacific_reachable, float("-inf"))
+        
+        # for col in range(cols):
+        #     dfs(rows-1, col, atlantic_reachable, float("-inf"))
+        # for row in range(rows):
+        #     dfs(row, cols-1, atlantic_reachable, float("-inf"))
+
+        # result = []
+
+        # for cell in pacific_reachable & atlantic_reachable:
+        #     result.append(list(cell))
+        # return result
+
