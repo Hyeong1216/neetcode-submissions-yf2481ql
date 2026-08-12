@@ -1,0 +1,30 @@
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        # 1. Recursion
+        if not root or not q or not p:
+            return None
+        
+        if (max(p.val, q.val) < root.val):
+            return self.lowestCommonAncestor(root.left, p, q)
+        elif (min(p.val, q.val) > root.val):
+            return self.lowestCommonAncestor(root.right, p, q)
+        else:
+            return root
+
+        # 2. Iteration
+        # cur = root
+        # while cur: 
+        #     if p.val < cur.val and q.val < cur.val:
+        #         cur = cur.left
+        #     elif p.val > cur.val and q.val > cur.val:
+        #         cur = cur.right
+        #     else: # 분기점이 생긴다 == 그게 LCA다
+        #         return cur
+        
